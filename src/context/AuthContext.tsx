@@ -95,12 +95,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const signup = async (userData: any, password: string) => {
         try {
-            // 1. Sign up auth user
+            // 1. Sign up auth user (trigger will auto-create profile)
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: userData.email,
                 password: password,
                 options: {
                     data: {
+                        role: userData.role,
                         full_name: userData.fullName || null,
                         company_name: userData.companyName || null,
                     }
@@ -118,31 +119,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             console.log("Auth user created:", authData.user.id);
 
-            // 2. Insert into profiles table
-            const { error: profileError } = await supabase
-                .from('profiles')
-                .insert([{
-                    id: authData.user.id,
-                    email: userData.email,
-                    role: userData.role,
-                    full_name: userData.fullName || null,
-                    company_name: userData.companyName || null,
-                    industry_category: userData.industryCategory || null,
-                }]);
+            // 2. Wait a moment for trigger to create profile
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-            if (profileError) {
-                console.error("Profile creation failed:", profileError);
-                // Try to delete the auth user since profile creation failed
-                await supabase.auth.admin.deleteUser(authData.user.id).catch((e) => {
-                    console.error("Failed to cleanup auth user:", e);
-                });
-                throw new Error(`Failed to create user profile: ${profileError.message}`);
-            }
-
-            console.log("Profile created successfully for user:", authData.user.id);
-
-            // 3. Fetch the profile to populate the user state
+            // 3. Fetch the profile that was auto-created by the trigger
             await fetchProfile(authData.user.id, userData.email);
+
+            console.log("Signup completed successfully");
         } catch (error: any) {
             console.error("Signup error:", error);
             throw error;
