@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader } from "../components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
@@ -19,6 +20,7 @@ interface Post {
     comments_count: number;
     created_at: string;
     user_liked?: boolean;
+    user_id: string;
     profiles: {
         full_name: string;
         company_name: string;
@@ -29,6 +31,7 @@ interface Post {
 
 export default function FeedPage() {
     const { user } = useAuth()
+    const navigate = useNavigate()
     const [posts, setPosts] = useState<Post[]>([])
     const [requests, setRequests] = useState<any[]>([])
     const [activeTab, setActiveTab] = useState<'feed' | 'requests'>('feed')
@@ -498,19 +501,24 @@ export default function FeedPage() {
                     ) : (
                         posts.map(post => {
                             const authorName = post.profiles?.full_name || post.profiles?.company_name || "Unknown User"
-                            const authorRole = post.profiles?.role || "Member"
                             const authorInitials = getInitials(authorName)
 
                             return (
                                 <Card key={post.id}>
                                     <CardHeader className="flex flex-row items-center gap-4 p-4 pb-2">
-                                        <Avatar>
-                                            <AvatarFallback>{authorInitials}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-sm">{authorName}</span>
-                                            <span className="text-xs text-muted-foreground capitalize">{authorRole} • {getTimeAgo(post.created_at)}</span>
+                                        <div
+                                            className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity flex-1"
+                                            onClick={() => navigate(`/profile/${post.user_id}`)}
+                                        >
+                                            <Avatar className="h-10 w-10">
+                                                <AvatarFallback>{authorInitials}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold text-sm">{authorName}</span>
+                                                <span className="text-xs text-muted-foreground capitalize">{post.profiles?.role}</span>
+                                            </div>
                                         </div>
+                                        <span className="text-xs text-muted-foreground">{getTimeAgo(post.created_at)}</span>
                                     </CardHeader>
                                     <CardContent className="p-4 pt-2 space-y-3">
                                         {post.content && <p className="text-sm leading-relaxed whitespace-pre-wrap">{post.content}</p>}

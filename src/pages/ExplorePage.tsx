@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader } from "../components/ui/card"
 import { Avatar, AvatarFallback } from "../components/ui/avatar"
@@ -18,6 +19,7 @@ interface Post {
     comments_count: number;
     created_at: string;
     user_liked?: boolean;
+    user_id: string;
     profiles: {
         full_name: string;
         company_name: string;
@@ -28,6 +30,7 @@ interface Post {
 
 export default function ExplorePage() {
     const { user } = useAuth()
+    const navigate = useNavigate()
     const [posts, setPosts] = useState<Post[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [filter, setFilter] = useState<'all' | 'image' | 'video'>('all')
@@ -179,7 +182,10 @@ export default function ExplorePage() {
                         return (
                             <Card key={post.id} className="overflow-hidden">
                                 <CardHeader className="p-4 pb-2">
-                                    <div className="flex items-center gap-2">
+                                    <div
+                                        className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={() => navigate(`/profile/${post.user_id}`)}
+                                    >
                                         <Avatar className="h-8 w-8">
                                             <AvatarFallback className="text-xs">{authorInitials}</AvatarFallback>
                                         </Avatar>
