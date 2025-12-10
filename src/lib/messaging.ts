@@ -108,3 +108,51 @@ export async function searchProfiles(query: string) {
     if (error) throw error;
     return data;
 }
+
+// Follow a user
+export async function followUser(followerId: string, followingId: string) {
+    const { error } = await supabase
+        .from('follows')
+        .insert([{ follower_id: followerId, following_id: followingId }]);
+
+    if (error) throw error;
+}
+
+// Unfollow a user
+export async function unfollowUser(followerId: string, followingId: string) {
+    const { error } = await supabase
+        .from('follows')
+        .delete()
+        .eq('follower_id', followerId)
+        .eq('following_id', followingId);
+
+    if (error) throw error;
+}
+
+// Check if user is following another user
+export async function checkIsFollowing(followerId: string, followingId: string) {
+    const { data, error } = await supabase
+        .from('follows')
+        .select('id')
+        .eq('follower_id', followerId)
+        .eq('following_id', followingId)
+        .single();
+
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "not found"
+    return !!data;
+}
+
+// Get user's posts
+export async function getUserPosts(userId: string) {
+    const { data, error } = await supabase
+        .from('posts')
+        .select(`
+            *,
+            profiles(full_name, company_name, role, avatar_url)
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+}
