@@ -156,3 +156,52 @@ export async function getUserPosts(userId: string) {
     if (error) throw error;
     return data;
 }
+
+// Get user notifications
+export async function getNotifications(userId: string) {
+    const { data, error } = await supabase
+        .from('notifications')
+        .select(`
+            *,
+            actor:profiles!notifications_actor_id_fkey(full_name, company_name, avatar_url)
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+    if (error) throw error;
+    return data;
+}
+
+// Mark notification as read
+export async function markNotificationAsRead(notificationId: string) {
+    const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('id', notificationId);
+
+    if (error) throw error;
+}
+
+// Mark all notifications as read
+export async function markAllNotificationsAsRead(userId: string) {
+    const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('user_id', userId)
+        .eq('read', false);
+
+    if (error) throw error;
+}
+
+// Get unread notification count
+export async function getUnreadNotificationCount(userId: string) {
+    const { count, error } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('read', false);
+
+    if (error) throw error;
+    return count || 0;
+}
