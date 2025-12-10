@@ -83,45 +83,45 @@ export default function SearchPage() {
     const getInitials = (name: string) => name ? name.substring(0, 2).toUpperCase() : "??"
 
     return (
-        <div className="w-full max-w-4xl mx-auto py-6 px-4 space-y-6">
+        <div className="w-full max-w-4xl mx-auto py-4 md:py-6 px-3 md:px-4 space-y-4 md:space-y-6 animate-fadeIn">
             <div className="space-y-4">
-                <h1 className="text-3xl font-bold">Search</h1>
+                <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Search</h1>
 
-                {/* Search Input */}
-                <div className="relative">
-                    <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                {/* Premium Search Input */}
+                <div className="relative glass-card rounded-2xl p-1 shadow-premium transition-smooth hover:shadow-premium-lg">
+                    <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
                     <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search for posts or people..."
-                        className="w-full pl-10 pr-10 py-3 rounded-full border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full pl-12 pr-12 py-3 md:py-4 rounded-xl bg-transparent border-none focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm md:text-base transition-smooth"
                     />
                     {query && (
                         <button
                             onClick={() => setQuery("")}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-smooth"
                         >
                             <X className="h-5 w-5 text-muted-foreground hover:text-foreground" />
                         </button>
                     )}
                 </div>
 
-                {/* Toggle Tabs */}
+                {/* Premium Toggle Tabs */}
                 <div className="flex items-center justify-center">
-                    <div className="bg-secondary/50 p-1 rounded-lg flex items-center gap-1">
+                    <div className="glass p-1.5 rounded-xl flex items-center gap-1 shadow-premium">
                         <Button
-                            variant={activeTab === 'posts' ? 'secondary' : 'ghost'}
+                            variant={activeTab === 'posts' ? 'default' : 'ghost'}
                             size="sm"
-                            className={`text-sm rounded-md px-6 ${activeTab === 'posts' ? 'bg-background shadow-sm font-semibold' : 'text-muted-foreground'}`}
+                            className={`text-sm rounded-lg px-6 md:px-8 transition-smooth ${activeTab === 'posts' ? 'shadow-md' : ''}`}
                             onClick={() => setActiveTab('posts')}
                         >
                             Posts
                         </Button>
                         <Button
-                            variant={activeTab === 'profiles' ? 'secondary' : 'ghost'}
+                            variant={activeTab === 'profiles' ? 'default' : 'ghost'}
                             size="sm"
-                            className={`text-sm rounded-md px-6 ${activeTab === 'profiles' ? 'bg-background shadow-sm font-semibold' : 'text-muted-foreground'}`}
+                            className={`text-sm rounded-lg px-6 md:px-8 transition-smooth ${activeTab === 'profiles' ? 'shadow-md' : ''}`}
                             onClick={() => setActiveTab('profiles')}
                         >
                             Profiles
@@ -132,45 +132,52 @@ export default function SearchPage() {
 
             {/* Results */}
             {isLoading ? (
-                <div className="text-center p-12 text-muted-foreground">Searching...</div>
-            ) : !query.trim() ? (
                 <div className="text-center p-12 text-muted-foreground">
-                    Start typing to search for {activeTab}
+                    <div className="animate-pulse">Searching...</div>
+                </div>
+            ) : !query.trim() ? (
+                <div className="glass-card rounded-2xl p-12 text-center text-muted-foreground shadow-premium">
+                    <SearchIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p>Start typing to search for {activeTab}</p>
                 </div>
             ) : activeTab === 'posts' ? (
                 posts.length === 0 ? (
-                    <div className="text-center p-12 text-muted-foreground">No posts found</div>
+                    <div className="glass-card rounded-2xl p-12 text-center text-muted-foreground shadow-premium">
+                        <p>No posts found</p>
+                    </div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-3 md:space-y-4">
                         {posts.map(post => (
-                            <Card key={post.id}>
-                                <CardHeader className="flex flex-row items-center gap-4 p-4 pb-2">
-                                    <Avatar>
-                                        <AvatarFallback>{getInitials(post.profiles?.full_name || post.profiles?.company_name)}</AvatarFallback>
+                            <Card key={post.id} className="glass-card hover-lift animate-slideUp overflow-hidden">
+                                <CardHeader className="flex flex-row items-center gap-3 md:gap-4 p-3 md:p-4 pb-2">
+                                    <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-primary/20">
+                                        <AvatarFallback className="bg-gradient-primary text-white">
+                                            {getInitials(post.profiles?.full_name || post.profiles?.company_name)}
+                                        </AvatarFallback>
                                     </Avatar>
-                                    <div className="flex flex-col">
-                                        <span className="font-semibold text-sm">{post.profiles?.full_name || post.profiles?.company_name}</span>
+                                    <div className="flex flex-col flex-1 min-w-0">
+                                        <span className="font-semibold text-sm md:text-base truncate">{post.profiles?.full_name || post.profiles?.company_name}</span>
                                         <span className="text-xs text-muted-foreground capitalize">{post.profiles?.role}</span>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="p-4 pt-2 space-y-3">
-                                    {post.content && <p className="text-sm">{post.content}</p>}
-                                    {post.image_url && <img src={post.image_url} alt="Post" className="w-full rounded-lg max-h-96 object-cover" />}
-                                    {post.video_url && <video src={post.video_url} controls className="w-full rounded-lg max-h-96" />}
+                                <CardContent className="p-3 md:p-4 pt-2 space-y-3">
+                                    {post.content && <p className="text-sm md:text-base leading-relaxed">{post.content}</p>}
+                                    {post.image_url && <img src={post.image_url} alt="Post" className="w-full rounded-xl max-h-96 object-cover shadow-md" />}
+                                    {post.video_url && <video src={post.video_url} controls className="w-full rounded-xl max-h-96 shadow-md" />}
 
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 border-t">
+                                    <div className="flex items-center gap-3 md:gap-4 text-sm text-muted-foreground pt-2 border-t">
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className={`gap-2 ${post.user_liked ? 'text-red-500' : ''}`}
+                                            className={`gap-2 transition-smooth hover-scale ${post.user_liked ? 'text-red-500' : ''}`}
                                             onClick={() => handleLike(post.id)}
                                         >
                                             <Heart className={`h-4 w-4 ${post.user_liked ? 'fill-current' : ''}`} />
-                                            {post.likes_count || 0}
+                                            <span className="hidden sm:inline">{post.likes_count || 0}</span>
                                         </Button>
-                                        <Button variant="ghost" size="sm" className="gap-2">
+                                        <Button variant="ghost" size="sm" className="gap-2 transition-smooth hover-scale">
                                             <MessageCircle className="h-4 w-4" />
-                                            {post.comments_count || 0}
+                                            <span className="hidden sm:inline">{post.comments_count || 0}</span>
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -180,28 +187,33 @@ export default function SearchPage() {
                 )
             ) : (
                 profiles.length === 0 ? (
-                    <div className="text-center p-12 text-muted-foreground">No profiles found</div>
+                    <div className="glass-card rounded-2xl p-12 text-center text-muted-foreground shadow-premium">
+                        <p>No profiles found</p>
+                    </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         {profiles.map(profile => (
-                            <Card key={profile.id}>
-                                <CardContent className="p-6">
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="h-16 w-16">
-                                            <AvatarFallback className="text-lg">{getInitials(profile.full_name || profile.company_name)}</AvatarFallback>
+                            <Card key={profile.id} className="glass-card hover-lift animate-slideUp">
+                                <CardContent className="p-4 md:p-6">
+                                    <div className="flex items-center gap-3 md:gap-4">
+                                        <Avatar className="h-14 w-14 md:h-16 md:w-16 ring-2 ring-primary/20">
+                                            <AvatarFallback className="text-base md:text-lg bg-gradient-primary text-white">
+                                                {getInitials(profile.full_name || profile.company_name)}
+                                            </AvatarFallback>
                                         </Avatar>
-                                        <div className="flex-1">
-                                            <h3 className="font-semibold text-lg">{profile.full_name || profile.company_name}</h3>
-                                            <p className="text-sm text-muted-foreground capitalize">{profile.role}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold text-base md:text-lg truncate">{profile.full_name || profile.company_name}</h3>
+                                            <p className="text-sm text-muted-foreground capitalize truncate">{profile.role}</p>
                                             {profile.industry_category && (
-                                                <p className="text-xs text-muted-foreground mt-1">{profile.industry_category}</p>
+                                                <p className="text-xs text-muted-foreground mt-1 truncate">{profile.industry_category}</p>
                                             )}
                                         </div>
                                         <Button
                                             size="sm"
                                             onClick={() => navigate(`/profile/${profile.id}`)}
+                                            className="shrink-0 transition-smooth hover-scale"
                                         >
-                                            View Profile
+                                            View
                                         </Button>
                                     </div>
                                 </CardContent>
