@@ -24,6 +24,7 @@ function App() {
             <Route path="/dashboard" element={<FeedPage />} />
 
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:userId" element={<ProfilePage />} />
 
             <Route path="/search" element={<SearchPage />} />
             <Route path="/explore" element={<ExplorePage />} />

@@ -127,6 +127,47 @@ export default function DashboardLayout() {
 
             </aside>
 
+            {/* MOBILE BOTTOM NAVIGATION */}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t z-50">
+                <div className="flex items-center justify-around py-2 px-2">
+                    <NavLink to="/feed" className={({ isActive }) => cn(
+                        "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-1",
+                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    )}>
+                        <Home className="h-5 w-5" />
+                        <span className="text-xs">Home</span>
+                    </NavLink>
+                    <NavLink to="/search" className={({ isActive }) => cn(
+                        "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-1",
+                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    )}>
+                        <Search className="h-5 w-5" />
+                        <span className="text-xs">Search</span>
+                    </NavLink>
+                    <NavLink to="/explore" className={({ isActive }) => cn(
+                        "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-1",
+                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    )}>
+                        <Compass className="h-5 w-5" />
+                        <span className="text-xs">Explore</span>
+                    </NavLink>
+                    <NavLink to="/messages" className={({ isActive }) => cn(
+                        "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-1",
+                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    )}>
+                        <MessageSquare className="h-5 w-5" />
+                        <span className="text-xs">Messages</span>
+                    </NavLink>
+                    <NavLink to="/profile" className={({ isActive }) => cn(
+                        "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors flex-1",
+                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                    )}>
+                        <User className="h-5 w-5" />
+                        <span className="text-xs">Profile</span>
+                    </NavLink>
+                </div>
+            </nav>
+
         </div>
     )
 }

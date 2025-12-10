@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader } from "../components/ui/card"
 import { Avatar, AvatarFallback } from "../components/ui/avatar"
@@ -10,6 +11,7 @@ import { toggleLike, checkUserLiked } from "../lib/api"
 
 export default function SearchPage() {
     const { user } = useAuth()
+    const navigate = useNavigate()
     const [query, setQuery] = useState("")
     const [activeTab, setActiveTab] = useState<'posts' | 'profiles'>('posts')
     const [posts, setPosts] = useState<any[]>([])
@@ -195,7 +197,12 @@ export default function SearchPage() {
                                                 <p className="text-xs text-muted-foreground mt-1">{profile.industry_category}</p>
                                             )}
                                         </div>
-                                        <Button size="sm">View Profile</Button>
+                                        <Button
+                                            size="sm"
+                                            onClick={() => navigate(`/profile/${profile.id}`)}
+                                        >
+                                            View Profile
+                                        </Button>
                                     </div>
                                 </CardContent>
                             </Card>
