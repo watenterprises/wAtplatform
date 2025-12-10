@@ -15,6 +15,7 @@ import {
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { cn } from "../lib/utils"
+import NotificationBell from "../components/NotificationBell"
 
 export default function DashboardLayout() {
     const { user } = useAuth()
@@ -70,10 +71,13 @@ export default function DashboardLayout() {
             {/* RIGHT SIDEBAR - Widgets */}
             <aside className="hidden lg:block w-80 p-6 space-y-8 sticky top-0 h-screen overflow-y-auto">
 
-                {/* Search Bar */}
-                <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Search posts, businesses..." className="pl-9 rounded-full bg-secondary/50 border-none" />
+                {/* Search Bar with Notification Bell */}
+                <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Search posts, businesses..." className="pl-9 rounded-full bg-secondary/50 border-none" />
+                    </div>
+                    <NotificationBell />
                 </div>
 
                 {/* Showing Recent Searches (Mock) */}
